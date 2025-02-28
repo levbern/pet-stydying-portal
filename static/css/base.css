@@ -204,6 +204,7 @@ h3 {
     position: relative;
     overflow: hidden;
     color: var(--text-grey);
+    height: 100%;
 }
 
 .feature-card:hover {

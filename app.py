@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, request, url_for
 from flask_login import (LoginManager, UserMixin, login_user, logout_user, login_required, current_user)
-import json, os
+import json, os, data_provider
 
 app = Flask(__name__)
 
@@ -64,10 +64,8 @@ def account():
     logged_in = current_user.is_authenticated
     if not logged_in:
         return render_template('not_logged.html')
-    folder_path = "sources/users/user_%s" % current_user.id + ".json"
-    
-    
-    return render_template('account.html')
+    user = data_provider.get_user(current_user.id)
+    return render_template('account.html', user=user, loggedIn=logged_in)
 
 @app.route('/logout')
 @login_required
@@ -77,7 +75,8 @@ def logout():
 
 @app.route('/courses')
 def courses():
-    return render_template('courses.html')
+    logged_in = current_user.is_authenticated
+    return render_template('courses.html', loggedIn=logged_in)
 
 # @app.route('/admin')
 # @login_required
@@ -96,8 +95,9 @@ def courses():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    logged_in = current_user.is_authenticated
     if request.method == 'GET':
-        return render_template("register.html")
+        return render_template("register.html", loggedIn=logged_in)
     elif request.method == 'POST':
         data = dict(request.form)
         data['id'] = str(len(os.listdir('sources/users')))
@@ -105,13 +105,14 @@ def register():
         folder_path = "sources/users/" + 'user_' + data['id'] + '.json'
         with open(folder_path, 'w') as json_file:
             json.dump(data, json_file)
-        return render_template("home.html")
+        return render_template("home.html", loggedIn=logged_in)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    logged_in = current_user.is_authenticated
     if request.method == 'GET':
-        return render_template('login.html')
+        return render_template('login.html',loggedIn=logged_in)
     elif request.method == 'POST':
         #data = dict(request.form)
         username = request.form.get("username")
@@ -122,11 +123,8 @@ def login():
             user_path = folder_path + "/" + user
             with open(user_path, 'r') as json_file:
                     user_data = json.load(json_file)
-                    print(user_data)
             if user_data["username"] == username and user_data["password"] == password:
-                print(user_data["id"])
                 cur_user = User(user_data["id"])
-                print(cur_user)
                 login_user(cur_user)
                 return redirect(url_for('home'))
 
