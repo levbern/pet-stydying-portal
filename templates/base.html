@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phantom</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/base.css">
+</head>
+
+
+<body>
+<!-- Хедер -->
+<nav class="navbar navbar-expand-lg nav-header fixed-top">
+    <div class="container">
+        <!-- Логотип -->
+        <a class="navbar-brand d-flex align-items-center brand-logo" href="/home">
+            <span class="h4 mb-0" style="color: var(--purple-primary);">Phan</span>
+            <span class="h4 mb-0" style="color: var(--text-grey);">tom</span>
+        </a>
+
+        <!-- Основное меню -->
+        <div class="collapse navbar-collapse">
+            <div class="navbar-nav mx-auto">
+                <a href="/home" class="btn btn-link nav-link">Главная</a>
+                <a href="/discussions" class="btn btn-link nav-link">Обсуждение</a>
+                
+                <!-- Выпадающее меню Обучение -->
+                <div class="nav-item dropdown">
+                    <a class="btn btn-link nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Обучение
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" href="/courses">🎓 Курсы</a></li>
+                        <li><a class="dropdown-item" href="/tasks">💡 Задания</a></li>
+                        <li><a class="dropdown-item" href="/tests">📊 Тесты</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Правая часть (логин/регистрация или профиль) -->
+            <div class="d-flex align-items-center">
+                {% if loggedIn %}
+                <!-- Профиль с выпадающим меню -->
+                <div class="dropdown">
+                    <button class="btn p-0" type="button" data-bs-toggle="dropdown">
+                        <div class="user-avatar" style="
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            background: var(--purple-primary);
+                            cursor: pointer;
+                        "></div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item" href="/account">
+                                <img src="https://assets.leetcode.com/users/default_avatar.jpg" alt="" class="me-2" style="border-radius: 9999px;" width="20">
+                                Аккаунт
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/progress">
+                                <img src="https://assets.leetcode.com/static_assets/public/webpack_bundles/images/progress.41532b6ef.png" alt="" class="me-2" width="20">
+                                Прогресс
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/groups">
+                                <img src="static/images/group.png" alt="" class="me-2" width="20">
+                                Группы
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/settings">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" role="none" class="me-2"><path fill-rule="evenodd" d="M7.174 5.619a8.064 8.064 0 011.635-.946l.29-1.158A2 2 0 0111.039 2h1.922a2 2 0 011.94 1.515l.29 1.158c.584.252 1.132.57 1.635.946l1.15-.329a2 2 0 012.282.923l.961 1.665a2 2 0 01-.342 2.437l-.86.832a8.151 8.151 0 010 1.888l.86.83a2 2 0 01.342 2.438l-.96 1.665a2 2 0 01-2.283.923l-1.15-.329a8.063 8.063 0 01-1.635.946l-.29 1.158a2 2 0 01-1.94 1.515H11.04a2 2 0 01-1.94-1.515l-.29-1.158a8.064 8.064 0 01-1.635-.946l-1.15.329a2 2 0 01-2.282-.923l-.961-1.665a2 2 0 01.342-2.437l.86-.831a8.158 8.158 0 010-1.889l-.86-.83a2 2 0 01-.342-2.438l.96-1.665a2 2 0 012.283-.923l1.15.329zm-1.7 1.594l-.961 1.665 1.57 1.518-.114.982a6.157 6.157 0 000 1.425l.114.982-1.57 1.518.96 1.665 2.104-.601.794.593c.38.284.793.523 1.23.711l.908.392.53 2.118h1.922l.53-2.118.909-.392a6.07 6.07 0 001.23-.711l.793-.593 2.103.601.961-1.665-1.57-1.518.114-.982a6.172 6.172 0 000-1.425l-.114-.982 1.57-1.518-.96-1.665-2.104.601-.794-.593a6.067 6.067 0 00-1.23-.71l-.908-.392L12.96 4H11.04l-.53 2.119-.909.391a6.064 6.064 0 00-1.23.711l-.793.593-2.103-.601zM12 16a4 4 0 100-8 4 4 0 000 8zm0-2a2 2 0 110-4 2 2 0 010 4z" clip-rule="evenodd" role="none"></path></svg>
+                                Настройки
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <a href="/logout" class="btn btn-link me-2" style="margin-left: 20px;">Выйти</a>
+                {% else %}
+                <!-- Кнопки авторизации -->
+                <a href="/login" class="btn btn-link">Войти</a>
+                <a href="/register" class="btn btn-link">Зарегистрироваться</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% block main_content %}
+{% endblock %}
+
+<footer class="py-4">
+    <div class="container text-center">
+        <div class="justify-content-center mb-2">
+            <a href="#" class="footer-links me-3">О платформе</a>
+            <a href="#" class="footer-links me-3">Контакты</a>
+            <a href="#" class="footer-links">Поддержка</a>
+        </div>
+        <p class="footer-links mb-0">© 2025 Phantom Education</p>
+    </div>
+</footer>
+<script>
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('.nav-header');
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+    document.querySelectorAll('.form-section').forEach((el) => {
+        observer.observe(el);
+    });
+</script>
+</body>
+</html>

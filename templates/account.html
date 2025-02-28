@@ -1,0 +1,83 @@
+{%extends "base.html" %}
+
+{% block main_content %}
+<div class="container profile-container">
+    <div class="row g-4">
+        <!-- Блок профиля -->
+        <div class="col-lg-4">
+            <div class="profile-card align-items-center">
+                <div class="photo-container">  <!-- Новый контейнер для фото -->
+                    <img src="https://avatars.yandex.net/get-music-content/3316841/08ba6f0b.a.13307717-1/m1000x1000?webp=false" 
+                        alt="Аватар" 
+                        class="profile-photo">
+                </div>
+                <div class="user-info">
+                    <h2 class="mb-3">Иванова Мария</h2>
+                    <p class="mb-2">👤 Логин: maria_phantom</p>
+                    <p>📧 maria@phantom.edu</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок достижений -->
+        <div class="col-lg-8">
+            <div class="achievements-column">
+                <h3 class="mb-4">🏅 Мои достижения</h3>
+                
+                <div class="achievement-card">
+                    <h4>🚀 Первые шаги</h4>
+                    <p class="mb-0">Заверши первый урок в любом курсе</p>
+                </div>
+
+                <div class="achievement-card">
+                    <h4>🎯 Точно в цель</h4>
+                    <p class="mb-0">Пройди тест без единой ошибки</p>
+                </div>
+
+                <div class="achievement-card">
+                    <h4>📚 Книжный червь</h4>
+                    <p class="mb-0">Изучи 5 различных курсов</p>
+                </div>
+
+                <!-- Dropdown секция -->
+                <div class="dropdown-section">
+                    <button class="dropdown-trigger" onclick="toggleDropdown()">
+                        <span>Как получать достижения?</span>
+                        <span class="dropdown-icon">➜</span>
+                    </button>
+                    <div class="dropdown-content" id="helpDropdown">
+                        <p>Для получения достижений:</p>
+                        <ul class="mb-0">
+                            <li>Регулярно проходи уроки</li>
+                            <li>Выполняй практические задания</li>
+                            <li>Участвуй в еженедельных челленджах</li>
+                            <li>Повышай свой уровень знаний</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleDropdown() {
+        const dropdown = document.getElementById('helpDropdown');
+        const icon = document.querySelector('.dropdown-icon');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        icon.style.transform = dropdown.style.display === 'block' ? 'rotate(90deg)' : 'rotate(0deg)';
+    }
+
+    // Инициализация анимаций
+    document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.achievement-card');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateX(0)';
+            }, index * 150);
+        });
+    });
+</script>
+{% endblock %}

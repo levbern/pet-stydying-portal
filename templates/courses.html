@@ -1,0 +1,129 @@
+{% extends "base.html"%}
+
+{%block main_content%}
+<div class="container" style="margin-top: 100px; padding-bottom: 50px;">
+    <!-- Фильтры -->
+    <div class="row mb-5">
+        <div class="col-md-8 mb-4">
+            <input type="text" id="searchInput" class="form-control search-input" 
+                   placeholder="🔍 Поиск по курсам...">
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex flex-wrap justify-content-end" id="tagFilters">
+                <div class="tag-filter active" data-tag="all">Все курсы</div>
+                <div class="tag-filter" data-tag="программирование">Кодинг</div>
+                <div class="tag-filter" data-tag="дизайн">Дизайн</div>
+                <div class="tag-filter" data-tag="аналитика">Аналитика</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточки курсов -->
+    <div class="row g-4" id="coursesContainer">
+        <!-- Курс 1 -->
+        <div class="col-lg-4 col-md-6" data-tags="программирование веб" data-name="Веб-разработка">
+            <div class="course-card animated-card">
+                <div class="course-content">
+                    <h5 class="mb-3">🚀 Основы веб-разработки</h5>
+                    <p class="text-grey mb-4">Полный курс по созданию современных веб-приложений с нуля</p>
+                    <div class="mt-auto">
+                        <div class="mb-4">
+                            <span class="course-tag">HTML/CSS</span>
+                            <span class="course-tag">JavaScript</span>
+                            <span class="course-tag">React</span>
+                        </div>
+                        <button class="btn btn-purple btn-courses w-100">Начать обучение</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Курс 2 -->
+        <div class="col-lg-4 col-md-6" data-tags="дизайн ui/ux" data-name="UI/UX дизайн">
+            <div class="course-card animated-card">
+                <div class="course-content">
+                    <h5 class="mb-3">🎨 Профессиональный UX</h5>
+                    <p class="text-grey mb-4">Проектирование сложных интерфейсов и дизайн-систем</p>
+                    <div class="mt-auto">
+                        <div class="mb-4">
+                            <span class="course-tag">Figma</span>
+                            <span class="course-tag">Прототипы</span>
+                            <span class="course-tag">Анимация</span>
+                        </div>
+                        <button class="btn btn-purple btn-courses w-100">Изучать дизайн</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Курс 3 -->
+        <div class="col-lg-4 col-md-6" data-tags="аналитика данные" data-name="Анализ данных">
+            <div class="course-card animated-card">
+                <div class="course-content">
+                    <h5 class="mb-3">📊 Data Science</h5>
+                    <p class="text-grey mb-4">Машинное обучение и анализ больших данных</p>
+
+                    <!-- Нижний блок с тегами и кнопкой -->
+                    <div class="mt-auto">
+                        <div class="mb-4">
+                            <span class="course-tag">Python</span>
+                            <span class="course-tag">SQL</span>
+                            <span class="course-tag">Tableau</span>
+                        </div>
+                        <button class="btn btn-purple btn-courses w-100">Анализировать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const tagFilters = document.querySelectorAll('.tag-filter');
+        const courses = document.querySelectorAll('[data-tags]');
+
+        // Инициализация анимации
+        document.querySelectorAll('.animated-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.15}s`;
+        });
+
+        // Обработчики событий
+        searchInput.addEventListener('input', filterCourses);
+        tagFilters.forEach(tag => tag.addEventListener('click', toggleTagFilter));
+
+        function filterCourses() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activeTags = Array.from(document.querySelectorAll('.tag-filter.active'))
+                                  .map(tag => tag.dataset.tag);
+
+            courses.forEach(course => {
+                const courseTags = course.dataset.tags.split(' ');
+                const courseName = course.dataset.name?.toLowerCase() || '';
+                
+                const matchesSearch = courseName.includes(searchTerm) || 
+                                    course.textContent.toLowerCase().includes(searchTerm);
+                
+                const matchesTags = activeTags.includes('all') || 
+                                  activeTags.every(tag => courseTags.includes(tag));
+
+                course.style.display = (matchesSearch && matchesTags) ? 'block' : 'none';
+            });
+        }
+
+        function toggleTagFilter(e) {
+            const tag = e.target;
+            if (tag.dataset.tag === 'all') {
+                tagFilters.forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+            } else {
+                document.querySelector('[data-tag="all"]').classList.remove('active');
+                tag.classList.toggle('active');
+            }
+            filterCourses();
+        }
+    });
+</script>
+{% endblock %}

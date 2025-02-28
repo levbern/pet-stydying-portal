@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block main_content%}
+<main class="form-section">
+    <!-- Герой-секция -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <h1 class="display-3 mb-4">Phantom Education</h1>
+                    <p class="lead mb-4">Инновационная платформа для современного обучения с элементами геймификации</p>
+                    <div class="d-flex gap-3">
+                        {% if not loggedIn %}
+                            <a href="/login" class="btn btn-purple">Начать обучение</a>
+                        {%endif%}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Основные функции -->
+    <section class="container py-4">
+        <h2 class="section-heading">Наши возможности</h2>
+        <div class="row g-4">
+            <!-- Карточка курсов -->
+            <div class="col-md-4">
+                <a href="/courses" class="card card-dark feature-card text-decoration-none p-4">
+                    <h3>🎓Интерактивные курсы</h3>
+                    <p>Изучайте материалы с помощью современных методик обучения</p>
+                    <div class="mt-auto">
+                        <span class="btn btn-purple btn-sm">Перейти →</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Карточка задач -->
+            <div class="col-md-4">
+                <a href="/tasks" class="card card-dark feature-card text-decoration-none p-4">
+                    <h3>💡Банк задач</h3>
+                    <p>Практикуйтесь с заданиями разного уровня сложности</p>
+                    <div class="mt-auto">
+                        <span class="btn btn-purple btn-sm">Решать →</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Карточка тестов -->
+            <div class="col-md-4">
+                <a href="/tests" class="card card-dark feature-card text-decoration-none p-4">
+                    <h3>📊Тестирование</h3>
+                    <p>Проверяйте знания с помощью интерактивных тестов</p>
+                    <div class="mt-auto">
+                        <span class="btn btn-purple btn-sm">Пройти →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Дополнительные разделы -->
+    <section class="container py-5">
+        <div class="row g-5">
+            <div class="col-md-6">
+                <div class="card-dark p-4">
+                    <h3 class="mb-4">🎯 Персональный прогресс</h3>
+                    <p>Отслеживайте свои достижения и улучшайте результаты</p>
+                    <div class="progress bg-dark mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-purple" role="progressbar" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card-dark p-4">
+                    <h3 class="mb-4">🏆 Система достижений</h3>
+                    <p>Зарабатывайте бейджи и повышайте свой уровень</p>
+                    <div class="d-flex gap-3">
+                        <div class="achievement-badge">🥇</div>
+                        <div class="achievement-badge">🎓</div>
+                        <div class="achievement-badge">⚡</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Анимация при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        gsap.from('.feature-card', {
+            duration: 1,
+            y: 50,
+            opacity: 0,
+            stagger: 0.2,
+            ease: "power4.out"
+        });
+    });
+
+    // Параллакс эффект для героя
+    window.addEventListener('scroll', function() {
+        const scrolled = window.pageYOffset;
+        if(document.querySelector('.platform-image')) {
+            document.querySelector('.platform-image').style.transform = 
+            `translateY(${scrolled * 0.15}px)`;
+        }
+    });
+</script>
+
+{% endblock %}
