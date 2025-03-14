@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+:root {
+    --purple-0: #2d0a45;
+    --purple-5: #4a1c6d;
+    --purple-10: #6a2d9e;
+    --purple-20: #8b3dbf;
+    --purple-highlight: #b76dff;
+}
+
+.contrib-table {
+    background: #1a0829;
+    border-radius: 15px;
+    padding: 25px;
+    font-family: Arial, sans-serif;
+    color: #e0d6ff;
+    box-shadow: 0 10px 30px rgba(43, 0, 77, 0.3);
+}
+
+.month-labels {
+    display: flex;
+    gap: 22px;
+    padding-left: 50px;
+    margin-bottom: 10px;
+}
+
+.days-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-right: 15px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(53, 15px);
+    gap: 5px;
+}
+
+.contribution-cell {
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    background: var(--purple-0);
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.3s;
+}
+
+.contribution-cell:hover {
+    transform: scale(1.2);
+    filter: brightness(1.3);
+    z-index: 1;
+}
+
+.legend {
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.9em;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.tooltip {
+    position: absolute;
+    background: var(--purple-20);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    pointer-events: none;
+    transform: translate(-50%, -120%);
+}
+</style>
+</head>
+<body>
+
+<div class="contrib-table">
+    <div class="month-labels">
+        <!-- Месяцы для вставки через Python -->
+        {% for month in months %}
+        <span>{{ month }}</span>
+        {% endfor %}
+    </div>
+    
+    <div style="display: flex">
+        <div class="days-column">
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+        </div>
+        
+        <div class="grid">
+            <!-- Ячейки данных -->
+            {% for week in contributions %}
+            {% for day in week %}
+            <div class="contribution-cell" 
+                 data-value="{{ day.value }}"
+                 data-date="{{ day.date }}"
+                 style="background: {{ get_color(day.value) }}"></div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="legend">
+        <span>Less</span>
+        <div class="legend-item">
+            <div class="contribution-cell" style="background: var(--purple-0)"></div>
+            <div class="contribution-cell" style="background: var(--purple-5)"></div>
+            <div class="contribution-cell" style="background: var(--purple-10)"></div>
+            <div class="contribution-cell" style="background: var(--purple-20)"></div>
+        </div>
+        <span>More</span>
+        <a href="#" style="color: #b76dff; margin-left: 20px">Learn how we count contributions</a>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.contribution-cell').forEach(cell => {
+    // Динамическое обновление цвета на основе данных
+    const value = parseInt(cell.dataset.value) || 0;
+    cell.style.background = getComputedStyle(cell).background;
+    
+    // Подсказка при наведении
+    const tooltip = document.createElement('div');
+    tooltip.className = 'tooltip';
+    
+    cell.addEventListener('mousemove', (e) => {
+        tooltip.textContent = `${cell.dataset.date}: ${value} contributions`;
+        tooltip.style.left = `${e.pageX}px`;
+        tooltip.style.top = `${e.pageY}px`;
+    });
+    
+    cell.addEventListener('mouseenter', () => {
+        document.body.appendChild(tooltip);
+        if(value > 10) cell.style.filter = 'brightness(1.5)';
+    });
+    
+    cell.addEventListener('mouseleave', () => {
+        document.body.removeChild(tooltip);
+        cell.style.filter = '';
+    });
+});
+
+// Функция для определения цвета (может быть заменена на серверную)
+function getColor(value) {
+    if(value === 0) return 'var(--purple-0)';
+    if(value <= 5) return 'var(--purple-5)';
+    if(value <= 10) return 'var(--purple-10)';
+    return 'var(--purple-20)';
+}
+</script>
+
+</body>
+</html>

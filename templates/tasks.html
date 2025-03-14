@@ -1,0 +1,256 @@
+{% extends "base.html"%}
+{% block main_content %}
+<style>
+    /* Дополнительные стили для страницы заданий */
+    .tasks-container {
+        max-width: 1300px;
+        margin: 100px auto 40px;
+        padding: 0 20px;
+    }
+
+    .filters-section {
+        background: var(--card-bg);
+        border-radius: 25px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .filter-group {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .custom-select {
+        background: var(--input-bg) !important;
+        border: 2px solid rgba(138,43,226,0.3) !important;
+        color: var(--text-light) !important;
+        border-radius: 15px !important;
+        padding: 12px 25px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .tasks-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card-bg);
+        border-radius: 25px;
+        overflow: hidden;
+    }
+
+    .task-row {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-bottom: 1px solid rgba(138,43,226,0.1);
+    }
+
+    .task-row:hover {
+        background: rgba(138,43,226,0.05);
+    }
+
+    .task-link {
+        color: var(--text-light);
+        text-decoration: none;
+        padding: 18px 25px;
+        display: block;
+        transition: color 0.3s ease;
+    }
+
+    .task-link:hover {
+        color: var(--purple-primary);
+    }
+
+    .difficulty-badge {
+        padding: 6px 15px;
+        border-radius: 15px;
+        font-size: 0.85em;
+        font-weight: 500;
+    }
+
+    .easy { background: rgba(76, 175, 80, 0.2); color: #4CAF50; }
+    .medium { background: rgba(255, 193, 7, 0.2); color: #FFC107; }
+    .hard { background: rgba(244, 67, 54, 0.2); color: #F44336; }
+
+    .progress-container {
+        width: 120px;
+        height: 6px;
+        background: var(--input-bg);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: var(--purple-primary);
+        transition: width 0.5s ease;
+    }
+
+    .mobile-task-card {
+        display: none;
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .tasks-table { display: none; }
+        .mobile-task-card { display: block; }
+    }
+</style>
+
+<div class="tasks-container">
+    <!-- Фильтры и сортировка -->
+    <div class="filters-section">
+        <div class="filter-group">
+            <select class="custom-select" id="difficultyFilter">
+                <option value="all">Все сложности</option>
+                <option value="easy">Легко</option>
+                <option value="medium">Средне</option>
+                <option value="hard">Сложно</option>
+            </select>
+
+            <select class="custom-select" id="topicFilter">
+                <option value="all">Все темы</option>
+                <option value="math">Математика</option>
+                <option value="cs">Информатика</option>
+                <option value="physics">Физика</option>
+            </select>
+
+            <div class="search-input-wrapper">
+                <input type="text" class="search-input" id="taskSearch" placeholder="Поиск заданий...">
+            </div>
+        </div>
+
+        <!-- Фильтры по тегам -->
+            <div class="tag-filter active">Все</div>
+            <div class="tag-filter">Динамика</div>
+            <div class="tag-filter">Графы</div>
+            <div class="tag-filter">Алгебра</div>
+            <div class="tag-filter">ООП</div>
+    </div>
+
+    <!-- Таблица заданий -->
+    <table class="tasks-table">
+        <thead>
+            <tr>
+                <th style="width: 45%; padding: 20px 25px;">Название</th>
+                <th style="width: 20%;">Сложность</th>
+                <th style="width: 20%;">Тема</th>
+                <th style="width: 15%;">Прогресс</th>
+            </tr>
+        </thead>
+        <tbody id="tasksBody">
+            <!-- Примеры заданий -->
+            <tr class="task-row" data-difficulty="easy" data-topic="math" data-tags="алгебра">
+                <td>
+                    <a href="/task/1" class="task-link">
+                        Сумма последовательности
+                    </a>
+                </td>
+                <td><span class="difficulty-badge easy">Легко</span></td>
+                <td>Математика</td>
+                <td>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 75%"></div>
+                    </div>
+                </td>
+            </tr>
+
+            <tr class="task-row" data-difficulty="medium" data-topic="cs" data-tags="динамика графы">
+                <td>
+                    <a href="/task/2" class="task-link">
+                        Кратчайший путь в графе
+                    </a>
+                </td>
+                <td><span class="difficulty-badge medium">Средне</span></td>
+                <td>Информатика</td>
+                <td>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 30%"></div>
+                    </div>
+                </td>
+            </tr>
+            <!-- Добавьте больше заданий -->
+        </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Динамическая фильтрация
+    const filters = {
+        difficulty: 'all',
+        topic: 'all',
+        search: '',
+        tags: []
+    };
+
+    function updateFilters() {
+        const searchText = document.getElementById('taskSearch').value.toLowerCase();
+        const rows = document.querySelectorAll('.task-row');
+        
+        rows.forEach(row => {
+            const matchesDifficulty = filters.difficulty === 'all' || 
+                row.dataset.difficulty === filters.difficulty;
+            
+            const matchesTopic = filters.topic === 'all' || 
+                row.dataset.topic === filters.topic;
+            
+            const matchesSearch = row.textContent.toLowerCase().includes(searchText);
+            
+            const matchesTags = filters.tags.length === 0 || 
+                filters.tags.every(tag => row.dataset.tags.includes(tag));
+            
+            row.style.display = (matchesDifficulty && matchesTopic && 
+                               matchesSearch && matchesTags) ? '' : 'none';
+        });
+    }
+
+    // Обработчики событий
+    document.querySelectorAll('.custom-select').forEach(select => {
+        select.addEventListener('change', updateFilters);
+    });
+
+    document.getElementById('taskSearch').addEventListener('input', updateFilters);
+
+    document.querySelectorAll('.tag-filter').forEach(tag => {
+        tag.addEventListener('click', function() {
+            this.classList.toggle('active');
+            updateFilters();
+        });
+    });
+
+    // Адаптивность
+    function updateMobileView() {
+        if (window.innerWidth < 768) {
+            const tasks = [];
+            document.querySelectorAll('.task-row').forEach(row => {
+                if (row.style.display !== 'none') {
+                    tasks.push(`
+                        <div class="mobile-task-card">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="difficulty-badge ${row.querySelector('.difficulty-badge').className.split(' ')[1]}">
+                                    ${row.querySelector('.difficulty-badge').textContent}
+                                </span>
+                                <span>${row.children[2].textContent}</span>
+                            </div>
+                            <a href="${row.querySelector('a').href}" class="task-link">
+                                ${row.querySelector('a').textContent}
+                            </a>
+                            <div class="progress-container mt-2">
+                                ${row.querySelector('.progress-bar').outerHTML}
+                            </div>
+                        </div>
+                    `);
+                }
+            });
+            document.getElementById('mobileTasks').innerHTML = tasks.join('');
+        }
+    }
+
+    window.addEventListener('resize', updateMobileView);
+    updateFilters();
+</script>
+{% endblock %}

@@ -1,7 +1,9 @@
-from flask import Flask, render_template, redirect, request, url_for
+import random
+from flask import Flask, render_template, redirect, request, url_for, jsonify
 from flask_login import (LoginManager, UserMixin, login_user, logout_user, login_required, current_user)
 import json, os, data_provider
 
+from uuid import uuid4
 app = Flask(__name__)
 
 app.secret_key = 'secret_key'
@@ -10,6 +12,69 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+
+#-------------------------------------------------------------------#
+MESSAGES_FILE = 'messages.json'
+
+#----------------------------------для таблицы github--------------------------------#
+@app.route('/github')
+def contributions():
+    # Пример данных (замените своими)
+    data = {
+        'months': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Dec'],
+        'contributions': generate_contributions_data(),
+        'get_color': lambda value: (
+            'var(--purple-20)' if value > 10 else
+            'var(--purple-10)' if value > 5 else
+            'var(--purple-5)' if value > 0 else
+            'var(--purple-0)'
+        )
+    }
+    return render_template('github-activity.html', **data)
+
+def generate_contributions_data():
+    # Генерация данных для 53 недель
+    return [[{'value': random.randint(0, 15), 'date': '2023-01-05'} 
+           for _ in range(7)] for _ in range(53)]
+
+#----------------------------для чата-------------------------------#
+
+
+@app.route('/get_messages')
+def get_messages():
+    return jsonify(load_messages())
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    data = request.json
+    messages = load_messages()
+    
+    new_message = {
+        'id': str(uuid4()),
+        'class': 'own' if data['username'] == 'current_user' else 'alien',
+        'text': data['text'],
+        'username': data['username']
+    }
+    
+    messages.append(new_message)
+    save_messages(messages)
+    return jsonify({'status': 'success'})
+
+@app.route('/delete_message/<msg_id>', methods=['DELETE'])
+def delete_message(msg_id):
+    messages = load_messages()
+    filtered = [m for m in messages if m['id'] != msg_id]
+    
+    if len(filtered) == len(messages):
+        return jsonify({'status': 'not found'}), 404
+    
+    save_messages(filtered)
+    return jsonify({'status': 'deleted'})
+
+@app.route('/discussion', methods=['GET', 'POST'])
+def discussion():
+    return render_template('discussion.html')
+#----------------------------------------------------------------#
 
 class User(UserMixin):
     def __init__(self, user_id):
@@ -48,7 +113,10 @@ def home():
     logged_in = current_user.is_authenticated  # Автоматическая проверка статуса
     return render_template('home.html', loggedIn=logged_in)
 
-
+@app.route('/tasks')
+def tasks():
+    logged_in = current_user.is_authenticated  # Автоматическая проверка статуса
+    return render_template('tasks.html', loggedIn=logged_in)
 
 # @app.route('/profile')
 # @login_required

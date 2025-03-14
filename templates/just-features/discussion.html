@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block main_content %}
+
+<div class="chat-container">
+    <!-- Заголовок чата -->
+    <div class="chat-header">
+        <a href="/courses" class="back-btn">← Назад</a>
+        <h2 style="color: var(--purple-primary);">Обсуждение курса: "Продвинутый Python"</h2>
+    </div>
+
+    <!-- История сообщений -->
+    <div class="chat-messages" id="chatMessages">
+        <!-- Пример сообщений -->
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        
+        <div class="message own">
+            <div class="message-username">Вы</div>
+            Спасибо, уже начал изучать материалы!
+            <div class="message-controls">
+                <button class="delete-btn bg-danger" onclick="deleteMessage(2)">Удалить</button>
+            </div>
+        </div>
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        <div class="message alien">
+            <div class="message-username">Профессор_Иванов</div>
+            Добро пожаловать на курс! Задавайте вопросы здесь.
+        </div>
+        
+        <!-- Добавьте остальные 18 сообщений по аналогии -->
+    </div>
+
+    <!-- Форма ввода -->
+    <div class="message-input-container">
+        <input type="text" class="message-input" placeholder="Написать сообщение...">
+        <button class="btn btn-purple">Отправить</button>
+    </div>
+</div>
+
+<script>
+    // Обработчик правого клика
+    document.querySelectorAll('.message.own').forEach(msg => {
+        msg.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            const deleteBtn = msg.querySelector('.delete-btn');
+            deleteBtn.style.display = 'block';
+            setTimeout(() => deleteBtn.style.display = 'none', 2000);
+        });
+    });
+
+    async function deleteMessage(msgId) {
+        const response = await fetch(`/delete_message/${msgId}`, { method: 'DELETE' });
+        if (response.ok) {
+            document.querySelector(`[data-id="${msgId}"]`).remove();
+        }
+    }
+</script>
+{% endblock %}

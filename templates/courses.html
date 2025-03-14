@@ -1,11 +1,12 @@
 {% extends "base.html"%}
 
 {%block main_content%}
+
 <div class="container" style="margin-top: 100px; padding-bottom: 50px;">
     <!-- Фильтры -->
     <div class="row mb-5">
         <div class="col-md-8 mb-4">
-            <input type="text" id="searchInput" class="form-control search-input" 
+            <input type="text" id="searchInput" class="find search-input" 
                    placeholder="🔍 Поиск по курсам...">
         </div>
         <div class="col-md-4">
@@ -20,6 +21,7 @@
 
     <!-- Карточки курсов -->
     <div class="row g-4" id="coursesContainer">
+        <!-- Тут можно циклом выводить карточки, они будут располагаться нормально-->
         <!-- Курс 1 -->
         <div class="col-lg-4 col-md-6" data-tags="программирование веб" data-name="Веб-разработка">
             <div class="course-card animated-card">
