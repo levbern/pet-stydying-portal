@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block main_content %}
+<div class="container py-5">
+    <h3 class="section-heading mb-5">Варианты выпадающих списков</h3>
+
+    <!-- Вариант 1: Неоновый градиент -->
+    <div class="mb-5">
+        <div class="dropdown">
+            <button class="btn btn-purple dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                Неоновый градиент
+            </button>
+            <ul class="dropdown-menu neon-dropdown">
+                <li><a class="dropdown-item d-flex align-items-center" href="#">
+                    <span class="me-2">⭐</span>Пункт 1</a></li>
+                <li><a class="dropdown-item d-flex align-items-center" href="#">
+                    <span class="me-2">🚀</span>Пункт 2</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item d-flex align-items-center" href="#">
+                    <span class="me-2">💎</span>Премиум</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Вариант 2: Минималистичный с иконками -->
+    <div class="mb-5">
+        <div class="dropdown-center">
+            <button class="btn btn-link dropdown-toggle" type="button" 
+                    data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                Минимализм + Иконки
+            </button>
+            <ul class="dropdown-menu minimal-dropdown">
+                <li><a class="dropdown-item" href="#">
+                    <img src="/static/images/user.svg" class="me-2" width="20"> Профиль</a></li>
+                <li><a class="dropdown-item" href="#">
+                    <img src="/static/images/settings.svg" class="me-2" width="20"> Настройки</a></li>
+                <li><a class="dropdown-item" href="#">
+                    <img src="/static/images/logout.svg" class="me-2" width="20"> Выход</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Вариант 3: Анимированный выдвижной -->
+    <div class="mb-5">
+        <div class="dropdown">
+            <button class="btn btn-purple dropdown-toggle slide-trigger" type="button" 
+                    data-bs-toggle="dropdown">
+                Анимированный слайд
+            </button>
+            <ul class="dropdown-menu slide-dropdown">
+                <li><a class="dropdown-item" href="#">Элемент 1</a></li>
+                <li><a class="dropdown-item" href="#">Элемент 2</a></li>
+                <li><a class="dropdown-item" href="#">Элемент 3</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Вариант 4: Карточный стиль -->
+    <div class="mb-5">
+        <div class="dropdown">
+            <button class="btn btn-link dropdown-toggle" type="button" 
+                    data-bs-toggle="dropdown">
+                Карточный дизайн
+            </button>
+            <ul class="dropdown-menu card-dropdown">
+                <li><a class="dropdown-item" href="#">
+                    <div class="card-header">Важное</div>
+                    <div class="card-body">Уведомления</div>
+                </a></li>
+                <li><a class="dropdown-item" href="#">
+                    <div class="card-header">Обновления</div>
+                    <div class="card-body">Версия 2.0</div>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Вариант 5: Hover-эффекты -->
+    <div class="mb-5">
+        <div class="dropdown">
+            <button class="btn btn-purple dropdown-toggle" type="button" 
+                    data-bs-toggle="dropdown">
+                Интерактивный hover
+            </button>
+            <ul class="dropdown-menu hover-dropdown">
+                <li><a class="dropdown-item" href="#">
+                    <span class="hover-effect">Профиль</span></a></li>
+                <li><a class="dropdown-item" href="#">
+                    <span class="hover-effect">Настройки</span></a></li>
+                <li><a class="dropdown-item" href="#">
+                    <span class="hover-effect">Выход</span></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Вариант 6: Анимированные пункты -->
+    <div class="mb-5">
+        <div class="dropdown">
+            <button class="btn btn-link dropdown-toggle" type="button" 
+                    data-bs-toggle="dropdown">
+                Тайл-анимация
+            </button>
+            <ul class="dropdown-menu tile-dropdown">
+                <li><a class="dropdown-item" href="#">
+                    <span class="tile">🏆 Достижения</span></a></li>
+                <li><a class="dropdown-item" href="#">
+                    <span class="tile">📚 Курсы</span></a></li>
+                <li><a class="dropdown-item" href="#">
+                    <span class="tile">💡 Идеи</span></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Стили для варианта 1 */
+.neon-dropdown {
+    border: 2px solid var(--purple-primary);
+    background: linear-gradient(45deg, var(--card-bg) 40%, #2d0a45);
+    overflow: hidden;
+}
+
+.neon-dropdown .dropdown-item {
+    position: relative;
+    transition: 0.3s;
+    padding: 12px 25px;
+}
+
+.neon-dropdown .dropdown-item:hover {
+    background: rgba(138,43,226,0.15);
+    padding-left: 35px;
+}
+
+/* Стили для варианта 2 */
+.minimal-dropdown {
+    border-radius: 15px;
+    padding: 10px 0;
+}
+
+.minimal-dropdown .dropdown-item {
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    padding: 12px 25px;
+}
+
+.minimal-dropdown img {
+    filter: invert(0.5) sepia(1) hue-rotate(250deg);
+}
+
+/* Стили для варианта 3 */
+.slide-dropdown {
+    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: top;
+}
+
+@keyframes slideDown {
+    0% { transform: scaleY(0); opacity: 0; }
+    100% { transform: scaleY(1); opacity: 1; }
+}
+
+/* Стили для варианта 4 */
+.card-dropdown {
+    min-width: 300px;
+    padding: 15px;
+    background: var(--text-dark);
+}
+
+.card-dropdown .card-header {
+    color: var(--purple-primary);
+    font-size: 0.9em;
+}
+
+.card-dropdown .card-body {
+    font-size: 0.8em;
+    color: var(--text-grey);
+}
+
+/* Стили для варианта 5 */
+.hover-dropdown .dropdown-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.hover-effect {
+    position: relative;
+    z-index: 1;
+}
+
+.hover-effect::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--purple-primary);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+}
+
+.hover-dropdown .dropdown-item:hover .hover-effect::before {
+    transform: scaleX(1);
+}
+
+/* Стили для варианта 6 */
+.tile-dropdown {
+    background: var(--card-bg);
+    border-radius: 20px;
+}
+
+.tile {
+    display: block;
+    transform: skew(-10deg);
+    transition: 0.3s;
+}
+
+.tile-dropdown .dropdown-item:hover .tile {
+    transform: skew(0deg);
+    color: var(--purple-primary);
+}
+</style>
+{% endblock %}

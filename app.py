@@ -76,6 +76,12 @@ def discussion():
     return render_template('discussion.html')
 #----------------------------------------------------------------#
 
+@app.route('/dropdowns')
+def dropdowns():
+    return render_template('/just-features/dropdowns.html')
+
+#----------------------------------------------------------------#
+
 class User(UserMixin):
     def __init__(self, user_id):
         folder_path = "sources/users"
