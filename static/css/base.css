@@ -650,3 +650,148 @@ h3 {
     padding: 15px 25px;
     border-radius: 20px;
 }
+
+/* ДЛЯ MARKDOWN */
+.editor-container {
+    margin-top: 80px;
+    max-width: 1400px;  /* Фиксированная ширина контейнера */
+    margin: 80px auto 0; /* Вертикальный отступ + авто-отступы по бокам */
+    padding: 0 20px;
+}
+
+.editor-wrapper {
+    display: flex;
+    gap: 15px;
+    height: calc(100vh - 100px);
+    position: relative;
+}
+
+.editor-box, .preview-box {
+    background: var(--card-bg);
+    border-radius: 20px;
+    width: 100%;
+    padding: 25px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    flex: 1;
+    overflow: hidden;
+}
+
+.editor-title {
+    color: var(--purple-primary);
+    border-left: 4px solid var(--purple-primary);
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+#input {
+    background: var(--input-bg);
+    border: 2px solid rgba(138,43,226,0.3);
+    color: var(--text-light);
+    border-radius: 15px;
+    padding: 20px;
+    height: 85%;
+    font-family: 'Fira Code', monospace;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#input:focus {
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 4px rgba(138,43,226,0.25);
+}
+
+.preview-box {
+    background: var(--card-bg);
+    overflow-y: auto;
+    position: relative;
+}
+
+.divider {
+    width: 5px;
+    background: rgba(138,43,226,0.3);
+    cursor: col-resize;
+    transition: background 0.3s ease;
+    margin: 0 10px;
+}
+
+.divider:hover {
+    background: var(--purple-primary);
+}
+
+/* Стили для предпросмотра */
+.editor-box h1, .editor-box h2, .editor-box h3 {
+    color: var(--text-light);
+    border-color: rgba(138,43,226,0.2);
+}
+.preview-box h1, .preview-box h2, .preview-box h3 {
+    color: var(--text-light);
+    border-color: rgba(138,43,226,0.2);
+}
+
+.preview-box code {
+    background: rgba(138,43,226,0.1);
+    color: var(--purple-primary);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.preview-box pre {
+    background: var(--input-bg);
+    border: 1px solid rgba(138,43,226,0.2);
+    border-radius: 12px;
+    padding: 15px;
+    overflow-x: auto;
+}
+.text-area:active {
+    border-color: var(--purple-active);
+}
+.text-area:focus {
+    border-color: var(--purple-primary) !important;
+    box-shadow: 0 0 0 4px rgba(138,43,226,0.25) !important;
+    outline: none !important;
+    transform: scale(1.02);
+}
+.katex {
+    color: var(--text-light);
+    font-size: 1.1em;
+}
+
+.row.g-4 {
+    justify-content: center; /* Центрирование колонок */
+}
+
+.col-lg-8 { /* Новая ширина колонок */
+    flex: 0 0 90%;
+    max-width: 90%;
+}
+#output img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    margin: 1rem 0;
+    object-fit: contain;
+    display: block;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(138,43,226,0.3);
+}
+
+/* Для адаптивности добавляем медиа-запросы */
+@media (max-width: 768px) {
+    #output img {
+        max-width: 90vw;
+        margin: 1rem auto;
+    }
+}
+
+/* Дополнительные улучшения для контейнера */
+.preview-box {
+    overflow-x: hidden;
+    padding: 20px;
+    position: relative;
+}
+
+/* Гарантия правильного отображения вложенных контейнеров */
+#output > * {
+    max-width: 100%;
+    overflow: hidden;
+}

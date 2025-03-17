@@ -12,7 +12,15 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+#----------------------------MARKDOWN------------------------------#
 
+@app.route('/markdown', methods=['GET', 'POST'])
+def markdown():
+    logged_in = current_user.is_authenticated
+    if request.method == 'GET':
+        return render_template('markdown.html', loggedIn=logged_in)
+    else:
+        return 0
 #-------------------------------------------------------------------#
 MESSAGES_FILE = 'messages.json'
 

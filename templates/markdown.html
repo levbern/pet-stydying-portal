@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+    <div class="row g-4" style="margin-bottom: 30px">
+        <!-- Блок для редактирования -->
+        <div class="col-lg-4 col-md-6">
+            <div class="editor-container">
+                <div class="container">
+                    <div class="editor-wrapper" style="height: calc(100vh - 160px); margin-bottom: 10px;">
+                        <div class="editor-box">
+                            <h3 class="editor-title">Редактор Markdown</h3>
+                            <textarea class="text-area" id="input" placeholder="Введите текст с форматированием..." style="width: 100%;"></textarea>
+                        </div>
+                    </div>
+                    <button class="btn btn-purple btn-courses w-100">Добавить лекцию</button>
+                </div>
+            </div>
+        </div>
+        <!-- Блок интерактивного предпросмотра-->
+        <div class="col-lg-7 col-md-7">
+            <div class="editor-container">
+                <div class="container">
+                    <div class="editor-wrapper">
+                        <div class="preview-box">
+                            <h3 class="editor-title">Интерактивный предпросмотр</h3>
+                            <div id="output"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Инициализация Markdown и LaTeX
+        const latexExtensions = [{
+            name: 'latex',
+            level: 'block',
+            start(src) { return src.indexOf('$$') },
+            tokenizer(src) {
+                const match = src.match(/^\$\$([^$]+)\$\$/);
+                if (match) {
+                    return {
+                        type: 'latex',
+                        raw: match[0],
+                        text: match[1].trim()
+                    };
+                }
+            },
+            renderer(token) {
+                return `<div class="math-block">${token.text}</div>`;
+            }
+        }];
+
+        marked.use({ 
+            extensions: latexExtensions,
+            highlight: function(code, lang) {
+                return hljs.highlightAuto(code).value;
+            }
+        });
+
+        // Обработчик ввода
+        const updatePreview = () => {
+            const markdown = document.getElementById('input').value;
+            const html = marked.parse(markdown);
+            document.getElementById('output').innerHTML = html;
+            renderMathInElement(document.getElementById('output'), {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                output: 'mathml'
+            });
+        };
+
+        document.getElementById('input').addEventListener('input', updatePreview);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('input').focus();
+        });
+        // Инициализация скролла хедера
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.phantom-header');
+            header.classList.toggle('scrolled', window.scrollY > 50);
+        });
+    </script>
+{%endblock %}
