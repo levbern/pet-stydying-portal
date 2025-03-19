@@ -103,7 +103,7 @@ class User(UserMixin):
                 with open(user_path, 'r') as json_file:
                     user_data = json.load(json_file)
                 self.username = user_data["username"]
-                if user_data["username"] == "KEFedorov":
+                if user_data["username"] == "levbern":
                     self.is_admin = True
                 else:
                     self.is_admin = False
@@ -125,7 +125,7 @@ def load_user(user_id):
 @app.route('/home')
 def home():
     logged_in = current_user.is_authenticated  # Автоматическая проверка статуса
-    return render_template('home.html', loggedIn=logged_in)
+    return render_template('home.html', loggedIn=logged_in, admin=current_user.is_admin)
 
 @app.route('/tasks')
 def tasks():
