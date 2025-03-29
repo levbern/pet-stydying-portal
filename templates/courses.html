@@ -1,20 +1,28 @@
 {% extends "base.html"%}
 
 {%block main_content%}
-
 <div class="container" style="margin-top: 100px; padding-bottom: 50px;">
     <!-- Фильтры -->
-    <div class="row mb-5">
+    <div class="row">
         <div class="col-md-8 mb-4">
             <input type="text" id="searchInput" class="find search-input" 
-                   placeholder="🔍 Поиск по курсам...">
+                   placeholder="🔍 Поиск по курсам и тэгам...">
         </div>
-        <div class="col-md-4">
-            <div class="d-flex flex-wrap justify-content-end" id="tagFilters">
+        {%if admin%}
+            <div class="col-md-4 mb-4 d-flex align-items-center justify-content-center">
+                <a href="/add_course" class="btn btn-outblock align-items-center px-4">Создать курс</a>
+            </div>
+        {%endif%}
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-8" style="width: 100%;">
+            <div class="d-flex flex-wrap justify-content-start" id="tagFilters">
                 <div class="tag-filter active" data-tag="all">Все курсы</div>
-                <div class="tag-filter" data-tag="программирование">Кодинг</div>
-                <div class="tag-filter" data-tag="дизайн">Дизайн</div>
-                <div class="tag-filter" data-tag="аналитика">Аналитика</div>
+                <div class="tag-filter" data-tag="математика">Математика</div>
+                <div class="tag-filter" data-tag="программирование">Программирование</div>
+                <div class="tag-filter" data-tag="лингвистика">Лингвистика</div>
+                <div class="tag-filter" data-tag="физика">Физика</div>
+                <div class="tag-filter" data-tag="история">История</div>
             </div>
         </div>
     </div>

@@ -1,7 +1,8 @@
 import random
 from flask import Flask, render_template, redirect, request, url_for, jsonify
 from flask_login import (LoginManager, UserMixin, login_user, logout_user, login_required, current_user)
-import json, os, data_provider
+import json, os, database
+import sqlite3
 
 from uuid import uuid4
 app = Flask(__name__)
@@ -92,62 +93,46 @@ def dropdowns():
 
 class User(UserMixin):
     def __init__(self, user_id):
-        folder_path = "sources/users"
-        users = os.listdir(folder_path)
-        for user in users:
-            userId = user.replace("user_", "")
-            userId = userId.replace(".json", "")
-            if userId == user_id:
-                self.id = user_id
-                user_path = folder_path + "/" + user
-                with open(user_path, 'r') as json_file:
-                    user_data = json.load(json_file)
-                self.username = user_data["username"]
-                if user_data["username"] == "levbern":
-                    self.is_admin = True
-                else:
-                    self.is_admin = False
+        user_data = database.get_user(user_id)
+        if user_data is not None:
+            self.id = user_id
+            self.username = user_data[5]
+            self.is_admin = user_data[7]
+               
 
 @login_manager.user_loader
 def load_user(user_id):
-    folder_path = "sources/users"
-    users = os.listdir(folder_path)
-    for user in users:
-        userId = user.replace("user_", "")
-        userId = userId.replace(".json", "")
-        if userId == user_id:
-            return User(user_id)
+    user_data = database.get_user(user_id)
+    if user_data is not None:
+        return User(user_data[0])
     # Если user_id некорректный, то нужно вернуть None
     return None
-
 
 @app.route('/')
 @app.route('/home')
 def home():
     logged_in = current_user.is_authenticated  # Автоматическая проверка статуса
-    return render_template('home.html', loggedIn=logged_in, admin=current_user.is_admin)
+    if logged_in:
+        admin = current_user.is_admin
+    else:
+        admin = False
+    return render_template('home.html', loggedIn=logged_in, admin = admin)
 
 @app.route('/tasks')
 def tasks():
     logged_in = current_user.is_authenticated  # Автоматическая проверка статуса
     return render_template('tasks.html', loggedIn=logged_in)
 
-# @app.route('/profile')
-# @login_required
-# def profile():
-#     return f'''
-#     <b>Личный кабинет пользователя (защищенная страница)</b><br>
-#     Ваш логин: { current_user.username }<br>
-#     <a href="/logout">Выйти</a>'''
 
 
 @app.route('/account')
 def account():
     logged_in = current_user.is_authenticated
     if not logged_in:
-        return render_template('not_logged.html')
-    user = data_provider.get_user(current_user.id)
-    return render_template('account.html', user=user, loggedIn=logged_in)
+        return render_template('not_logged.html') #ДОДЕЛАТЬ
+    user = database.get_user(current_user.id)
+    achievements = database.get_user_achievements(current_user.id)
+    return render_template('account.html', user=user, loggedIn=logged_in, achievements=achievements)
 
 @app.route('/logout')
 @login_required
@@ -157,38 +142,29 @@ def logout():
 
 @app.route('/courses')
 def courses():
-    logged_in = current_user.is_authenticated
-    return render_template('courses.html', loggedIn=logged_in)
-
-# @app.route('/admin')
-# @login_required
-# def admin_panel():
-#     if current_user.is_admin:
-#         return '''
-#         <b>Панель администратора</b><br>
-#         Защищенная страница, доступная только администратору
-#         '''
-#     else:
-#         # Ошибка доступа
-#         abort(403)
-
-
-
+    logged_in = current_user.is_authenticated  # Автоматическая проверка статуса
+    if logged_in:
+        admin = current_user.is_admin
+    else:
+        admin = False
+    return render_template('courses.html', loggedIn=logged_in, admin=admin)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     logged_in = current_user.is_authenticated
+    if logged_in:
+        return 1
     if request.method == 'GET':
         return render_template("register.html", loggedIn=logged_in)
     elif request.method == 'POST':
         data = dict(request.form)
-        data['id'] = str(len(os.listdir('sources/users')))
-        data.pop('confirmPassword', None)
-        folder_path = "sources/users/" + 'user_' + data['id'] + '.json'
-        with open(folder_path, 'w') as json_file:
-            json.dump(data, json_file)
-        return render_template("home.html", loggedIn=logged_in)
-
+        print(data)
+        database.add_user(data)
+        user_data = database.login_user(data['username'])
+        user = User(user_data[0])
+        login_user(user)
+        database.add_user_achiev(current_user.id, 'start')
+        return render_template("home.html", loggedIn = True)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -196,21 +172,31 @@ def login():
     if request.method == 'GET':
         return render_template('login.html',loggedIn=logged_in)
     elif request.method == 'POST':
-        #data = dict(request.form)
         username = request.form.get("username")
         password = request.form.get("password")
-        folder_path = "sources/users"
-        users = os.listdir(folder_path)
-        for user in users:
-            user_path = folder_path + "/" + user
-            with open(user_path, 'r') as json_file:
-                    user_data = json.load(json_file)
-            if user_data["username"] == username and user_data["password"] == password:
-                cur_user = User(user_data["id"])
-                login_user(cur_user)
-                return redirect(url_for('home'))
-
+        user_data = database.login_user(username)
+        if user_data and user_data[1] == password:
+            user = User(user_data[0])
+            login_user(user)
+            return redirect(url_for('home'))
+        
         return 'Неверные данные! <a href="/login">Попробовать снова</a>'
+
+
+
+@app.route('/add_course', methods=['GET', 'POST'])
+def add_course():
+    logged_in = current_user.is_authenticated
+    if request.method == 'GET':
+        return render_template('add_course.html', loggedIn=logged_in)
+    elif request.method == 'POST':
+        data = request.form.getlist('subjects')
+        user_id = current_user.id
+        print(data)
+        #database.add_course(data, user_id)
+        return 'Курс создан!'
+    
+
 
 #=================================================================================================
 

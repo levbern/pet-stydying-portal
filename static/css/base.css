@@ -442,22 +442,6 @@ h3 {
 .find:active {
     border-color: var(--purple-active);
 }
-/* .search-input {
-    background: var(--input-bg) !important;
-    border: 2px solid rgba(138,43,226,0.3) !important;
-    color: var(--text-light) !important;
-    border-radius: 20px !important;
-    padding: 15px 30px !important;
-    width: 100%;
-    transition: all 0.3s ease;
-}
-.search-input::placeholder {
-    color: var(--text-grey);
-} */
-/* .search-input:focus {
-    border-color: var(--purple-primary) !important;
-    box-shadow: 0 0 0 4px rgba(138,43,226,0.25) !important;
-} */
 
 .search-input {
     background: var(--input-bg) !important;
@@ -758,11 +742,11 @@ h3 {
 .row.g-4 {
     justify-content: center; /* Центрирование колонок */
 }
-
-.col-lg-8 { /* Новая ширина колонок */
+/* 
+.col-lg-8 { 
     flex: 0 0 90%;
     max-width: 90%;
-}
+} */
 #output img {
     max-width: 100%;
     height: auto;
@@ -794,4 +778,69 @@ h3 {
 #output > * {
     max-width: 100%;
     overflow: hidden;
+}
+
+
+/* СТИЛЬ ДЛЯ КНОПОК ВНЕ КАРТОЧЕК */
+.btn-outblock {
+    background: var(--purple-primary);
+    color: var(--text-light) !important;
+    padding: 10px 20px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+    text-decoration: none;
+    transform: translateZ(0);
+    border: 2px solid transparent;
+}
+
+.btn-outblock::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--purple-primary);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    border-radius: 20px;
+}
+
+.btn-outblock:hover {
+    background: transparent !important;
+    border-color: var(--purple-primary) !important;
+}
+
+.btn-outblock:active {
+    background: rgba(111, 66, 193, 0.2) !important;
+    border-color: var(--purple-primary) !important;
+    transform: scale(0.96) translateZ(0);
+}
+
+
+/* Для добавления курса */
+.btn.btn-purple {
+    border-radius: 20px !important;
+    margin-left: 12px;
+}
+.tag-filter {
+    user-select: none;
+}
+.tag-filter.active {
+    background: var(--purple-primary) !important;
+    color: var(--text-light) !important;
+}
+
+.form-label {
+    color: var(--text-grey);
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+}
+
+.card-dark {
+    padding: 2rem;
+    background: var(--card-bg);
+    border: 2px solid rgba(138,43,226,0.15);
 }

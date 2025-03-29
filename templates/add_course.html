@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block main_content %}
+<div class="container" style="margin-top: 120px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Заголовок формы -->
+            <h2 class="mb-4" style="color: var(--purple-primary); border-left: 4px solid; padding-left: 1rem;">Создание нового курса</h2>
+            
+            <!-- Основная форма -->
+            <form id="courseForm" method="POST" class="card-dark">
+                <!-- Название курса -->
+                <div class="mb-4">
+                    <label for="courseName" class="form-label">Название курса</label>
+                    <input type="text" class="form-control tag-input" id="courseName" name="course_name" placeholder="Введите название курса" required>
+                </div>
+
+                <!-- Описание курса -->
+                <div class="mb-4">
+                    <label for="courseDescription" class="form-label">Краткое описание</label>
+                    <textarea class="form-control tag-input" id="courseDescription" name="description" rows="4" placeholder="Опишите основные цели и содержание курса" required></textarea>
+                </div>
+
+                <!-- Выбор предмета -->
+                <!-- Обновленный блок выбора предметов -->
+                <div class="mb-4">
+                    <label class="form-label">Предмет</label>
+                    <div class="d-flex flex-wrap gap-3">
+                        {% set subjects = ['Математика', 'Программирование', 'Физика', 'Химия', 'Биология', 'История'] %}
+                        {% for subject in subjects %}
+                        <div class="tag-filter" style="cursor: pointer;">
+                            <input type="checkbox" 
+                                class="d-none" 
+                                id="subject{{ loop.index }}" 
+                                name="subjects"
+                                value="{{ subject }}">
+                            <label for="subject{{ loop.index}}" 
+                                class="mb-0">{{ subject }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+                <!-- Система тегов -->
+                <div class="mb-4">
+                    <label class="form-label">Теги курса</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control tag-input" id="tagInput" style="border-radius: 20px;" placeholder="Введите тег и нажмите добавить">
+                        <button type="button" class="btn btn-purple" onclick="addTag()" style="margin-left: 10px;">Добавить тег</button>
+                    </div>
+                    <div id="tagsContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
+                    <input type="hidden" id="courseTags" name="tags">
+                </div>
+
+                <!-- Кнопка создания -->
+                <div class="d-flex justify-content-end mt-5">
+                    <button type="submit" 
+                            class="btn btn-purple px-5 py-2">Создать курс</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const maxTags = 5;
+    let tags = [];
+
+    function addTag() {
+        const tagInput = document.getElementById('tagInput');
+        const tagValue = tagInput.value.trim();
+
+        if (tagValue && tags.length < maxTags) {
+            if (!tags.includes(tagValue)) {
+                tags.push(tagValue);
+                renderTags();
+                tagInput.value = '';
+            }
+        }
+    }
+
+    function removeTag(index) {
+        tags.splice(index, 1);
+        renderTags();
+    }
+
+    function renderTags() {
+        const container = document.getElementById('tagsContainer');
+        const hiddenInput = document.getElementById('courseTags');
+        container.innerHTML = '';
+        
+        tags.forEach((tag, index) => {
+            const tagElement = document.createElement('div');
+            tagElement.className = 'tag-filter active';
+            tagElement.innerHTML = `
+                ${tag}
+                <button onclick="removeTag(${index})" 
+                        class="ms-2" 
+                        style="background: none; border: none; color: var(--text-light);">
+                    ×
+                </button>
+            `;
+            container.appendChild(tagElement);
+        });
+        
+        hiddenInput.value = tags.join(',');
+    }
+
+    // Валидация формы
+    document.getElementById('courseForm').addEventListener('submit', function(e) {
+        console.log('Отправляемые предметы:', 
+            Array.from(document.querySelectorAll('input[name="subjects"]:checked'))
+                .map(input => input.value)
+        );
+    });
+
+
+    // Стилизация чекбоксов
+    // Исправленный обработчик чекбоксов
+    document.querySelectorAll('.tag-filter').forEach(container => {
+        const checkbox = container.querySelector('input[type="checkbox"]');
+        
+        container.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Только переключаем текущий чекбокс
+            checkbox.checked = !checkbox.checked;
+            container.classList.toggle('active', checkbox.checked);
+        });
+    });
+
+    // Добавляем тег по нажатию Enter
+    document.getElementById('tagInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addTag();
+        }
+    });
+    
+</script>
+
+<style>
+    .tag-input {
+        background: var(--input-bg); 
+        border-color: rgba(138,43,226,0.3); 
+        border-radius: 20px;
+    }
+</style>
+
+{% endblock %}
