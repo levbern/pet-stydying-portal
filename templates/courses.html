@@ -29,62 +29,27 @@
 
     <!-- Карточки курсов -->
     <div class="row g-4" id="coursesContainer">
-        <!-- Тут можно циклом выводить карточки, они будут располагаться нормально-->
-        <!-- Курс 1 -->
-        <div class="col-lg-4 col-md-6" data-tags="программирование веб" data-name="Веб-разработка">
-            <div class="course-card animated-card">
-                <div class="course-content">
-                    <h5 class="mb-3">🚀 Основы веб-разработки</h5>
-                    <p class="text-grey mb-4">Полный курс по созданию современных веб-приложений с нуля</p>
-                    <div class="mt-auto">
-                        <div class="mb-4">
-                            <span class="course-tag">HTML/CSS</span>
-                            <span class="course-tag">JavaScript</span>
-                            <span class="course-tag">React</span>
+        <!-- Вывод всех курсов-->
+        {% for course in courses %}
+            <div class="col-lg-4 col-md-6" data-tags="{{course['subject']}}">
+                <div class="course-card animated-card">
+                    <div class="course-content">
+                        <h5 class="mb-3">{{course['name']}}</h5>
+                        <p class="text-grey mb-4">{{course['description']}}</p>
+
+                        <!-- Нижний блок с тегами и кнопкой -->
+                        <div class="mt-auto">
+                            <div class="mb-4">
+                                {% for tag in course['tags'] %}
+                                    <span class="course-tag">{{tag}}</span>
+                                {% endfor %}
+                            </div>
+                            <a href="/course/{{course['id']}}" class="btn btn-purple btn-courses w-100 text-decoration-none">Начать обучение</a>
                         </div>
-                        <button class="btn btn-purple btn-courses w-100">Начать обучение</button>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Курс 2 -->
-        <div class="col-lg-4 col-md-6" data-tags="дизайн ui/ux" data-name="UI/UX дизайн">
-            <div class="course-card animated-card">
-                <div class="course-content">
-                    <h5 class="mb-3">🎨 Профессиональный UX</h5>
-                    <p class="text-grey mb-4">Проектирование сложных интерфейсов и дизайн-систем</p>
-                    <div class="mt-auto">
-                        <div class="mb-4">
-                            <span class="course-tag">Figma</span>
-                            <span class="course-tag">Прототипы</span>
-                            <span class="course-tag">Анимация</span>
-                        </div>
-                        <button class="btn btn-purple btn-courses w-100">Изучать дизайн</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Курс 3 -->
-        <div class="col-lg-4 col-md-6" data-tags="аналитика данные" data-name="Анализ данных">
-            <div class="course-card animated-card">
-                <div class="course-content">
-                    <h5 class="mb-3">📊 Data Science</h5>
-                    <p class="text-grey mb-4">Машинное обучение и анализ больших данных</p>
-
-                    <!-- Нижний блок с тегами и кнопкой -->
-                    <div class="mt-auto">
-                        <div class="mb-4">
-                            <span class="course-tag">Python</span>
-                            <span class="course-tag">SQL</span>
-                            <span class="course-tag">Tableau</span>
-                        </div>
-                        <button class="btn btn-purple btn-courses w-100">Анализировать</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 
@@ -107,17 +72,20 @@
         function filterCourses() {
             const searchTerm = searchInput.value.toLowerCase();
             const activeTags = Array.from(document.querySelectorAll('.tag-filter.active'))
-                                  .map(tag => tag.dataset.tag);
+                                .map(tag => tag.dataset.tag);
 
             courses.forEach(course => {
                 const courseTags = course.dataset.tags.split(' ');
-                const courseName = course.dataset.name?.toLowerCase() || '';
+                const courseName = course.querySelector('h5').textContent.toLowerCase();
                 
+                // Проверка поискового запроса
                 const matchesSearch = courseName.includes(searchTerm) || 
                                     course.textContent.toLowerCase().includes(searchTerm);
                 
+                // Измененная логика: ИЛИ вместо И (some вместо every)
                 const matchesTags = activeTags.includes('all') || 
-                                  activeTags.every(tag => courseTags.includes(tag));
+                                (activeTags.length > 0 && 
+                                activeTags.some(tag => courseTags.includes(tag)));
 
                 course.style.display = (matchesSearch && matchesTags) ? 'block' : 'none';
             });

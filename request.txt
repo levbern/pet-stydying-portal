@@ -32,14 +32,11 @@ CREATE TABLE UserCourse (
 CREATE TABLE Courses (
     course_id INTEGER PRIMARY KEY AUTOINCREMENT,
     creator_id INTEGER NOT NULL,
-    name VARCHAR(20) NOT NULL,
-    description VARCHAR(60) NOT NULL
-);
-
-CREATE TABLE Subject (
-    conn_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    course_id INTEGER NOT NULL,
-    type VARCHAR(10)
+    name VARCHAR(30) NOT NULL,
+    description VARCHAR(90) NOT NULL,
+    subject VACHAR(15) NOT NULL,
+    tags VARCHAR(100) NOT NULL,
+    finished TINYINT DEFAULT 0
 );
 
 CREATE TABLE CourseCompletion (
@@ -53,5 +50,30 @@ CREATE TABLE CourseCompletion (
 
 CREATE TABLE Tags (
     tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(20)
+    course_id INTEGER NOT NULL,
+    name VARCHAR(20) NOT NULL
 );
+
+
+CREATE TABLE Lections (
+    lection_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VACHAR(20) NOT NULL,
+    description TEXT NOT NULL,
+    text TEXT NOT NULL
+)
+
+CREATE TABLE Test (
+    test_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL
+);
+
+CREATE TABLE TaskCourse (
+    conn_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    number INTEGER UNIQUE NOT NULL,
+    task_id INTEGER NOT NULL,
+    course_id INTEGER NOT NULL,
+    type TEXT NOT NULL
+);
+
+

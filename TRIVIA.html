@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <title>Trivia!</title>
+    <script>
+        function checkMultipleChoice(answer) {
+            const correctAnswer = '1'; // правильный ответ
+            const resultText = document.getElementById('resultText');
+            const buttons = document.querySelectorAll('.mc-button');
+
+            buttons.forEach(button => {
+                button.style.backgroundColor = '';
+            });
+
+            if (answer == correctAnswer) {
+                resultText.textContent = 'Correct!';
+                buttons[1].style.backgroundColor = 'green';
+            } else {
+                resultText.textContent = 'Incorrect';
+                buttons[answer].style.backgroundColor = 'red';
+            }
+        }
+
+        function checkFreeResponse() {
+            const userAnswer = document.getElementById('freeResponseInput').value.toLowerCase();
+            const correctAnswer = 'paris';
+            const resultText = document.getElementById('freeResultText');
+
+            if (userAnswer == correctAnswer) {
+                resultText.textContent = 'Correct!';
+                document.getElementById('freeResponseInput').style.backgroundColor = 'green';
+            } else {
+                resultText.textContent = 'Incorrect';
+                document.getElementById('freeResponseInput').style.backgroundColor = 'red';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>Trivia!</h1>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>Part 1: Multiple Choice</h2>
+            <hr>
+            <h3>My favorite color is:</h3>
+            <button class="mc-button" onclick="checkMultipleChoice(0)">purple</button>
+            <button class="mc-button" onclick="checkMultipleChoice(1)">green</button>
+            <button class="mc-button" onclick="checkMultipleChoice(2)">orange</button>
+            <div id="resultText"></div>
+        </div>
+
+        <div class="section">
+            <h2>Part 2: Free Response</h2>
+            <hr>
+            <h3>Capital of France is:</h3>
+            <input type="text" id="freeResponseInput" placeholder="Введите ваш ответ...">
+            <button onclick="checkFreeResponse()">Send</button>
+            <div id="freeResultText"></div>
+        </div>
+    </div>
+</body>
+</html>

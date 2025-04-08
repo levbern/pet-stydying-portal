@@ -46,43 +46,6 @@ def generate_contributions_data():
     return [[{'value': random.randint(0, 15), 'date': '2023-01-05'} 
            for _ in range(7)] for _ in range(53)]
 
-#----------------------------для чата-------------------------------#
-
-
-@app.route('/get_messages')
-def get_messages():
-    return jsonify(load_messages())
-
-@app.route('/send_message', methods=['POST'])
-def send_message():
-    data = request.json
-    messages = load_messages()
-    
-    new_message = {
-        'id': str(uuid4()),
-        'class': 'own' if data['username'] == 'current_user' else 'alien',
-        'text': data['text'],
-        'username': data['username']
-    }
-    
-    messages.append(new_message)
-    save_messages(messages)
-    return jsonify({'status': 'success'})
-
-@app.route('/delete_message/<msg_id>', methods=['DELETE'])
-def delete_message(msg_id):
-    messages = load_messages()
-    filtered = [m for m in messages if m['id'] != msg_id]
-    
-    if len(filtered) == len(messages):
-        return jsonify({'status': 'not found'}), 404
-    
-    save_messages(filtered)
-    return jsonify({'status': 'deleted'})
-
-@app.route('/discussion', methods=['GET', 'POST'])
-def discussion():
-    return render_template('discussion.html')
 #----------------------------------------------------------------#
 
 @app.route('/dropdowns')
@@ -124,31 +87,6 @@ def tasks():
     return render_template('tasks.html', loggedIn=logged_in)
 
 
-
-@app.route('/account')
-def account():
-    logged_in = current_user.is_authenticated
-    if not logged_in:
-        return render_template('not_logged.html') #ДОДЕЛАТЬ
-    user = database.get_user(current_user.id)
-    achievements = database.get_user_achievements(current_user.id)
-    return render_template('account.html', user=user, loggedIn=logged_in, achievements=achievements)
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('home'))
-
-@app.route('/courses')
-def courses():
-    logged_in = current_user.is_authenticated  # Автоматическая проверка статуса
-    if logged_in:
-        admin = current_user.is_admin
-    else:
-        admin = False
-    return render_template('courses.html', loggedIn=logged_in, admin=admin)
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     logged_in = current_user.is_authenticated
@@ -181,23 +119,66 @@ def login():
             return redirect(url_for('home'))
         
         return 'Неверные данные! <a href="/login">Попробовать снова</a>'
+    
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 
+@app.route('/account')
+def account():
+    logged_in = current_user.is_authenticated
+    if not logged_in:
+        return render_template('not_logged.html') #ДОДЕЛАТЬ
+    user = database.get_user(current_user.id)
+    achievements = database.get_user_achievements(current_user.id)
+    return render_template('account.html', user=user, loggedIn=logged_in, achievements=achievements)
+
+@app.route('/courses')
+def courses():
+    logged_in = current_user.is_authenticated
+    if logged_in:
+        admin = current_user.is_admin
+    else:
+        admin = False
+    courses = database.get_courses()
+    return render_template('courses.html', loggedIn=logged_in, admin=admin, courses=courses)
 
 @app.route('/add_course', methods=['GET', 'POST'])
 def add_course():
     logged_in = current_user.is_authenticated
+    if not logged_in:
+        return render_template('error.html', error='ДЕБИЛ АВТОРИЗУЙСЯ')
     if request.method == 'GET':
         return render_template('add_course.html', loggedIn=logged_in)
     elif request.method == 'POST':
-        data = request.form.getlist('subjects')
+        data = dict(request.form)
         user_id = current_user.id
         print(data)
-        #database.add_course(data, user_id)
-        return 'Курс создан!'
+        database.add_course(data, user_id)
+        return redirect(url_for('courses'))
     
+@app.route('/course/<course_id>')
+def course(course_id):
+    logged_in = current_user.is_authenticated
+    course = database.get_course(course_id)
+    tasks = database.get_tasks(course_id)
+    if (course['creator_id'] == current_user.id):
+        creator = True
+    else:
+        creator = False
+    return render_template('course.html', course=course, tasks=tasks, creator = creator, loggedIn = logged_in)
 
-
+@app.route('/add_lecture/<course_id>', methods=['GET', 'POST'])
+def add_lecture(course_id):
+    if request.method == 'GET':
+        return render_template('add_lection.html')
+    else:
+        lecture = dict(request.form)['lecture']
+        database.add_lecture(lecture, course_id)
+        return redirect(url_for(f'courses/{course_id}'))
 #=================================================================================================
 
 if __name__ == "__main__":

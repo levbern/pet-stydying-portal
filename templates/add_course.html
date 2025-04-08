@@ -21,20 +21,14 @@
                 </div>
 
                 <!-- Выбор предмета -->
-                <!-- Обновленный блок выбора предметов -->
                 <div class="mb-4">
                     <label class="form-label">Предмет</label>
                     <div class="d-flex flex-wrap gap-3">
-                        {% set subjects = ['Математика', 'Программирование', 'Физика', 'Химия', 'Биология', 'История'] %}
+                        {% set subjects = ['Математика', 'Программирование', 'Лингвистика', 'Физика', 'История'] %}
                         {% for subject in subjects %}
                         <div class="tag-filter" style="cursor: pointer;">
-                            <input type="checkbox" 
-                                class="d-none" 
-                                id="subject{{ loop.index }}" 
-                                name="subjects"
-                                value="{{ subject }}">
-                            <label for="subject{{ loop.index}}" 
-                                class="mb-0">{{ subject }}</label>
+                            <input type="radio" class="d-none" id="subject{{ loop.index }}" name="subject" value="{{ subject|lower }}" required>
+                            <label for="subject{{ loop.index}}" class="mb-0">{{ subject }}</label>
                         </div>
                         {% endfor %}
                     </div>
@@ -116,15 +110,18 @@
 
 
     // Стилизация чекбоксов
-    // Исправленный обработчик чекбоксов
     document.querySelectorAll('.tag-filter').forEach(container => {
-        const checkbox = container.querySelector('input[type="checkbox"]');
+        const radio = container.querySelector('input[type="radio"]');
         
         container.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Только переключаем текущий чекбокс
-            checkbox.checked = !checkbox.checked;
-            container.classList.toggle('active', checkbox.checked);
+            // Снимаем выделение со всех элементов
+            document.querySelectorAll('.tag-filter').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Устанавливаем выделение только для текущего
+            container.classList.add('active');
+            radio.checked = true;
         });
     });
 
