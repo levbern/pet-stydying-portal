@@ -585,6 +585,22 @@ h3 {
     box-shadow: 0 0 0 4px rgba(138,43,226,0.25);
 }
 
+#description {
+    background: var(--input-bg);
+    border: 2px solid rgba(138,43,226,0.3);
+    color: var(--text-light);
+    border-radius: 15px;
+    padding: 20px;
+    height: 85%;
+    font-family: 'Fira Code', monospace;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#description:focus {
+    border-color: var(--purple-primary);
+    box-shadow: 0 0 0 4px rgba(138,43,226,0.25);
+}
+
 .preview-box {
     background: var(--card-bg);
     overflow-y: auto;

@@ -118,7 +118,7 @@ def login():
             login_user(user)
             return redirect(url_for('home'))
         
-        return 'Неверные данные! <a href="/login">Попробовать снова</a>'
+        return render_template("error.html", error="Неверные данные")
     
 @app.route('/logout')
 @login_required
@@ -131,7 +131,7 @@ def logout():
 def account():
     logged_in = current_user.is_authenticated
     if not logged_in:
-        return render_template('not_logged.html') #ДОДЕЛАТЬ
+        return render_template('error.html', error="Требуется авторизация")
     user = database.get_user(current_user.id)
     achievements = database.get_user_achievements(current_user.id)
     return render_template('account.html', user=user, loggedIn=logged_in, achievements=achievements)
@@ -150,7 +150,7 @@ def courses():
 def add_course():
     logged_in = current_user.is_authenticated
     if not logged_in:
-        return render_template('error.html', error='ДЕБИЛ АВТОРИЗУЙСЯ')
+        return render_template('error.html', error="Требуется авторизация")
     if request.method == 'GET':
         return render_template('add_course.html', loggedIn=logged_in)
     elif request.method == 'POST':
@@ -176,9 +176,11 @@ def add_lecture(course_id):
     if request.method == 'GET':
         return render_template('add_lection.html')
     else:
-        lecture = dict(request.form)['lecture']
-        database.add_lecture(lecture, course_id)
-        return redirect(url_for(f'courses/{course_id}'))
+        data = dict(request.form)
+        print(data, course_id)
+        database.add_lecture(data['lecture_name'], data['description'], data['content'], course_id)
+        return redirect(url_for(f'courses'))
+
 #=================================================================================================
 
 if __name__ == "__main__":

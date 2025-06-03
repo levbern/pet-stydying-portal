@@ -1,4 +1,5 @@
 import sqlite3
+from sqlite3 import IntegrityError
 
 def get_user(user_id):
     conn = sqlite3.connect("static/data/site.db")
@@ -32,7 +33,6 @@ def get_courses():
 
 def get_course(course_id):
     course = dict()
-
     conn = sqlite3.connect("static/data/site.db")
     cursor = conn.cursor()
     dc = cursor.execute("""SELECT name, description, subject, tags, course_id, finished, creator_id FROM courses WHERE course_id = ?""", (course_id,)).fetchone()
@@ -62,6 +62,7 @@ def get_tasks(course_id):
     WHERE TC.course_id = ?
     ORDER BY TC.number ASC""", (course_id,)).fetchall()
     conn.close()
+    print(data_course)
     for dc in data_course:
         c = dict()
         c['name'] = dc[0]
@@ -124,5 +125,39 @@ def add_course(data, user_id):
         if conn:
             conn.close()
 
-# def add_lecture(lecture, course_id):
-    
+def add_lecture(lecture_name, description, content, course_id):
+    conn = sqlite3.connect("static/data/site.db")
+    try:
+        with conn:
+            cursor = conn.cursor()
+            
+            # 1. Вставка лекции
+            cursor.execute("""
+                INSERT INTO Lections (name, description, text)
+                VALUES (?, ?, ?)
+            """, (lecture_name, description, content))
+            lecture_id = cursor.lastrowid
+            
+            # 2. Атомарное определение порядкового номера
+            cursor.execute("""
+                SELECT COALESCE(MAX(number), 0) + 1 
+                FROM TaskCourse 
+                WHERE course_id = ? AND type = 'lection'
+            """, (course_id,))
+            new_number = cursor.fetchone()[0]
+            
+            # 3. Связывание с курсом
+            cursor.execute("""
+                INSERT INTO TaskCourse (number, task_id, course_id, type)
+                VALUES (?, ?, ?, 'lection')
+            """, (new_number, lecture_id, course_id))
+            
+            return {"success": True, "lecture_id": lecture_id}
+            
+    except IntegrityError as e:
+        return {"success": False, "error": f"Database integrity error: {str(e)}"}
+    except Exception as e:
+        conn.rollback()
+        return {"success": False, "error": f"Unexpected error: {str(e)}"}
+    finally:
+        conn.close()
